@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth show FirebaseAuth;
@@ -11,6 +12,7 @@ import 'package:flutter_application_1/my_home_page.dart';
 import 'package:flutter_application_1/page5.dart';
 import 'package:flutter_application_1/register.dart';
 import 'package:flutter_application_1/page2.dart';
+import 'package:intl/intl.dart';
 
 class MyAppState extends ChangeNotifier {
   Auth.FirebaseAuth auth = Auth.FirebaseAuth.instance;
@@ -83,290 +85,29 @@ class MyAppState extends ChangeNotifier {
   Future<void> file(j) async{
     club = await read(j);
     club = club.value;
-  }
-  Future<List<Widget>> tile() async{
-    tileList = [];
-    ShapeBorder shape = BoxBorder.all();
-    for(var j = 0; j<100;j++){
-      var num = j;
-      dynamic snapshot = await ref.child(num.toString()).get();
-      if(snapshot.exists){
-        snapshot = snapshot.value;
-      }
-      if(snapshot["link1"]!= null){
-        link1 = snapshot["link1"];
-      }
-      else{
-        print("1");
-        link1 = "";
-      }
-      if (snapshot["link2"] != null){
-        link2 = snapshot["link2"];
-      }
-      else{
-        print("2");
-        link2 = "";
-      }
-      if (snapshot["link3"] != null){
-        link3 = snapshot["link3"];
-      }
-      else{
-        print("3");
-        link3 = "";
-      }
-      
-      await file(j);
-      resetUser();
-      if (user?.email == club["Pres Email"] || user?.email == club["VP Email"] || user?.email == club["Sec Email"]|| user?.email == club["Treas Email"]){
-      tileList.add(
-        SizedBox(
-        height:230,
-        child: Card(
-              shape: shape,
-              color: colors,
-              child:Center(
-                child: Column(
-                  children:[
-                    SizedBox(height:10),
-                    Text(
-                      textAlign: TextAlign.center, 
-                      club["Club Name"],
-                    ),
-                    SizedBox(height:10),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                    children:[Text(
-                      textAlign: TextAlign.center, 
-                      club["President"]
-                    ),
-                    Text(
-                      textAlign: TextAlign.center, 
-                      club["Vice President"]
-                    ),
-                    Text(
-                      textAlign: TextAlign.center, 
-                      club["Treasurer"]
-                    ),
-                    Text(
-                      textAlign: TextAlign.center, 
-                      club["Secretary"]
-                    ),]
-                    ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed:()async {
-                        showDialog<void>(
-                          context: page5context, 
-                          builder:(BuildContext context){
-                            return AlertDialog(
-                              content:
-                                Column(
-                                  children:[
-                                    TextFormField(
-                                      initialValue: link1,
-                                      decoration: InputDecoration(
-                                        helperText: "Social Media Link 1 (eg. Discord, Instagram, Facebook)",
-                                      ),
-                                      onChanged:(input)async{
-                                        link1 = input;
-                                      },
-                                      ),
-                                    TextFormField(
-                                      initialValue: link2,
-                                      decoration: InputDecoration(
-                                        helperText: "Social Media Link 2 (eg. Discord, Instagram, Facebook)",
-                                      ),
-                                      onChanged:(input)async{
-                                        link2 = input;
-                                      },
-                                    ),
-                                    TextFormField(
-                                      initialValue: link3,
-                                      decoration: InputDecoration(
-                                        helperText: "Social Media Link 3 (eg. Discord, Instagram, Facebook)",
-                                      ),
-                                      onChanged:(input)async{
-                                        link3 = input;
-                                      },
-                                    ),
-                                  ]),
-                              actions:[ 
-
-                                ElevatedButton(
-                                  onPressed: ()async {
-                                    await ref.update({num.toString() + "/link1":link1});
-                                    await ref.update({num.toString() + "/link2":link2});
-                                    await ref.update({num.toString() + "/link3":link3});
-                                    Navigator.of(context).pop();
-                                  }, 
-                                    child: Text("Save and Close")
-                                    )
-                                  ]   
-                            );
-                          }
-                        );
-                      },
-                      child:Icon(Icons.settings),
-                    ),
-                  ]
-                )
-              ),
-            )
-        )
-      );
-
-      }
-      else{
-      tileList.add(
-        SizedBox(
-        height:230,
-        child: Card(
-              shape: shape,
-              color: colors,
-              child:Center(
-                child: Column(
-                  children:[
-                    SizedBox(height:10),
-                    Text(
-                      textAlign: TextAlign.center, 
-                      club["Club Name"],
-                    ),
-                    SizedBox(height:10),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                    children:[Text(
-                      textAlign: TextAlign.center, 
-                      club["President"]
-                    ),
-                    Text(
-                      textAlign: TextAlign.center, 
-                      club["Vice President"]
-                    ),
-                    Text(
-                      textAlign: TextAlign.center, 
-                      club["Treasurer"]
-                    ),
-                    Text(
-                      textAlign: TextAlign.center, 
-                      club["Secretary"]
-                    ),]
-                    ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed:()async{
-                        showDialog<void>(
-                          context: page5context, 
-                          builder:(BuildContext context){
-                            return AlertDialog(
-                              content:
-                                Column(
-                                  children:[
-                                    Text(snapshot["link1"]),
-                                    Text(snapshot["link2"]),
-                                    Text(snapshot["link3"]),
-                                  ]),
-                              actions:[ 
-                                ElevatedButton(
-                                  onPressed:()async{
-                                    await register(num);
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text("Register"),
-                                ),
-                                ElevatedButton(
-                                  onPressed: (){Navigator.of(context).pop();}, 
-                                    child: Text("Back")
-                                    )
-                                  ]   
-                            );
-                          }
-                        );
-                      },
-                      child:Text("Register"),
-                    ),
-                  ]
-                )
-              ),
-            )
-        )
-      );
-
-      }
-  }  
-  notifyListeners();
-  return tileList;
-  }  
-  register(var num)async{
+  } 
+  Future<void> register(var num)async{
+    var time = DateTime.now().toLocal();
+    var  format = DateFormat('yyyy-mm-dd');
+    String date = format.format(time);
+    print(num);
     resetUser();
+    var email2 = user?.email.toString().split("@")[0];
     email = user?.email;
-    dynamic snapshot = await ref.child(num.toString()).get();
+    dynamic snapshot = await ref.child("${num.toString()}/registry").get();
     if(snapshot.exists){
       snapshot = snapshot.value;
     }
-    var registry = snapshot["members"];
-    registry = registry + ", ${email}";
-    ref.update({"$num/members":registry});
+    ref.update({"$num/registry/$email2/date": date});
+    ref.update({"$num/registry/$email2/$email2": user?.email});
   } 
-  Future<List<Widget>> tileRegister()async{
-    registerList = [];
-    resetUser();
-    email = user?.email;
-    for(var j = 0; j < 100; j++){
-      ShapeBorder shape = BoxBorder.all();
-      dynamic snapshot = await ref.child(j.toString()).get();
-      if(snapshot.exists){
-        snapshot = snapshot.value;
-      }      
-      
-      if(snapshot["members"].toString().contains(email)){
-        registerList.add(
-        SizedBox(
-          height:230,
-          child: Card(
-              shape: shape,
-              color: colors,
-              child:Center(
-                child: Column(
-                  children:[
-                    SizedBox(height:10),
-                    Text(
-                      textAlign: TextAlign.center, 
-                      snapshot["Club Name"],
-                    ),
-                    SizedBox(height:10),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                    children:[Text(
-                      textAlign: TextAlign.center, 
-                      snapshot["President"]
-                    ),
-                    Text(
-                      textAlign: TextAlign.center, 
-                      snapshot["Vice President"]
-                    ),
-                    Text(
-                      textAlign: TextAlign.center, 
-                      snapshot["Treasurer"]
-                    ),
-                    Text(
-                      textAlign: TextAlign.center, 
-                      snapshot["Secretary"]
-                    ),]
-                    ),
-                  ]
-                )
-              )
-            )
-          )
-        );
-      }
+  Future<int> length() async {
+    var j = 0;
+    dynamic snapshot = await ref.child(j.toString()).get();
+    while (snapshot.exists) {
+      j++;
+      snapshot = await ref.child(j.toString()).get();
     }
-    print(registerList);
-    notifyListeners();
-    return registerList;
+    return j;
   }
-  void load2() async{
-    await MyAppState().tileRegister();
-    notifyListeners();
   }
-}
